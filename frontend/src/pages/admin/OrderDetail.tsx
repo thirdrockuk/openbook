@@ -191,7 +191,7 @@ export default function AdminOrderDetail() {
     }
   }
 
-  if (isLoading) return <div className="text-gray-500">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-gray-500">Loading…</div>;
   if (!order) return <div className="text-red-500">Order not found.</div>;
 
   const canEditAttendeePrices = order.status === 'pending' || order.status === 'confirmed';
@@ -200,6 +200,7 @@ export default function AdminOrderDetail() {
   return (
     <div>
       <button
+        type="button"
         onClick={() => navigate(-1)}
         className="text-sm text-sky-600 hover:underline mb-4 block"
       >
@@ -223,6 +224,7 @@ export default function AdminOrderDetail() {
               {`${window.location.origin}/booking/${order.view_token}`}
             </a>
             <button
+              type="button"
               onClick={handleCopyLink}
               className="text-xs text-gray-500 hover:text-gray-800 ml-1 shrink-0"
               title="Copy link"
@@ -256,6 +258,7 @@ export default function AdminOrderDetail() {
 
       <div className="bg-white border rounded-lg p-6 mb-6">
         <h2 className="font-semibold text-gray-800 mb-3">Attendees</h2>
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-gray-500 border-b text-xs uppercase">
@@ -321,7 +324,7 @@ export default function AdminOrderDetail() {
                         )}
                       </div>
                       {item.standard_price_pence != null && (
-                        <p className="text-[11px] text-gray-500">Std: {formatPence(item.standard_price_pence)}</p>
+                        <p className="text-xs text-gray-500">Std: {formatPence(item.standard_price_pence)}</p>
                       )}
                     </div>
                   ) : (
@@ -336,9 +339,10 @@ export default function AdminOrderDetail() {
                 <td colSpan={6} className="pb-4 px-0">
                   <div className="flex flex-wrap gap-3 items-end">
                     <div className="flex-1 min-w-[180px]">
-                      <label className="block text-xs text-gray-500 mb-0.5">Dietary requirements</label>
+                      <label htmlFor={`dietary-${item.id}`} className="block text-xs text-gray-500 mb-0.5">Dietary requirements</label>
                       {canEditRequirements ? (
                         <textarea
+                          id={`dietary-${item.id}`}
                           rows={1}
                           className="w-full border rounded px-2 py-1 text-xs resize-none"
                           value={getReqDraft(item.id, item.dietary_requirements, item.access_requirements).dietary}
@@ -358,9 +362,10 @@ export default function AdminOrderDetail() {
                       )}
                     </div>
                     <div className="flex-1 min-w-[180px]">
-                      <label className="block text-xs text-gray-500 mb-0.5">Access requirements</label>
+                      <label htmlFor={`access-${item.id}`} className="block text-xs text-gray-500 mb-0.5">Access requirements</label>
                       {canEditRequirements ? (
                         <textarea
+                          id={`access-${item.id}`}
                           rows={1}
                           className="w-full border rounded px-2 py-1 text-xs resize-none"
                           value={getReqDraft(item.id, item.dietary_requirements, item.access_requirements).access}
@@ -413,6 +418,7 @@ export default function AdminOrderDetail() {
             Attendee prices can only be edited while an order is pending or confirmed.
           </p>
         )}
+        </div>
       </div>
 
       {/* Payments */}
@@ -422,6 +428,7 @@ export default function AdminOrderDetail() {
         {order.payments.length === 0 ? (
           <p className="text-sm text-gray-400 mb-4">No payments recorded yet.</p>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm mb-4">
             <thead>
               <tr className="text-left text-gray-500 border-b text-xs uppercase">
@@ -446,6 +453,7 @@ export default function AdminOrderDetail() {
                   <td className="py-2 text-right">
                     {p.provider !== 'stub' && (
                       <button
+                        type="button"
                         onClick={() => handleDeletePayment(p.id)}
                         className="text-red-400 hover:text-red-600 text-xs"
                       >
@@ -469,6 +477,7 @@ export default function AdminOrderDetail() {
               </tr>
             </tfoot>
           </table>
+          </div>
         )}
 
         {/* Summary when no payment rows yet */}
@@ -484,12 +493,13 @@ export default function AdminOrderDetail() {
           <form onSubmit={handleRecordPayment} className="border-t pt-4 space-y-3">
             <h3 className="text-sm font-medium text-gray-700">Record a payment</h3>
             {paymentError && (
-              <p className="text-xs text-red-600">{paymentError}</p>
+              <p role="alert" className="text-xs text-red-600">{paymentError}</p>
             )}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Amount (£)</label>
+                <label htmlFor="payment-amount" className="block text-xs text-gray-500 mb-1">Amount (£)</label>
                 <input
+                  id="payment-amount"
                   type="number"
                   step="0.01"
                   min="0.01"
@@ -501,8 +511,9 @@ export default function AdminOrderDetail() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Method</label>
+                <label htmlFor="payment-method" className="block text-xs text-gray-500 mb-1">Method</label>
                 <select
+                  id="payment-method"
                   className="w-full border rounded px-3 py-1.5 text-sm"
                   value={paymentForm.method}
                   onChange={(e) => setPaymentForm({ ...paymentForm, method: e.target.value })}
@@ -516,8 +527,9 @@ export default function AdminOrderDetail() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Reference (optional)</label>
+                <label htmlFor="payment-reference" className="block text-xs text-gray-500 mb-1">Reference (optional)</label>
                 <input
+                  id="payment-reference"
                   type="text"
                   className="w-full border rounded px-3 py-1.5 text-sm"
                   placeholder="Cheque no., transfer ref…"
@@ -526,8 +538,9 @@ export default function AdminOrderDetail() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Note (optional)</label>
+                <label htmlFor="payment-note" className="block text-xs text-gray-500 mb-1">Note (optional)</label>
                 <input
+                  id="payment-note"
                   type="text"
                   className="w-full border rounded px-3 py-1.5 text-sm"
                   placeholder="Any additional note"
@@ -549,6 +562,7 @@ export default function AdminOrderDetail() {
 
       {order.status === 'pending' || order.status === 'confirmed' ? (
         <button
+          type="button"
           onClick={handleCancel}
           className="bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700"
         >

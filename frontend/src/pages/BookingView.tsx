@@ -23,7 +23,7 @@ export default function BookingView() {
   const { token } = useParams<{ token: string }>();
   const { data: booking, isLoading, isError } = useBookingView(token);
 
-  if (isLoading) return <div className="text-center py-16 text-gray-700">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-center py-16 text-gray-700">Loading…</div>;
   if (isError || !booking) {
     return (
       <div className="max-w-lg mx-auto py-16 text-center">
@@ -62,6 +62,7 @@ export default function BookingView() {
 
       <div className="bg-white border rounded-lg p-5 mb-4">
         <h2 className="font-semibold text-gray-900 mb-3">Attendees</h2>
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-gray-700 border-b text-xs uppercase">
@@ -93,6 +94,7 @@ export default function BookingView() {
             </tr>
           </tfoot>
         </table>
+        </div>
       </div>
 
       <div className="bg-white border rounded-lg p-5">
@@ -101,6 +103,7 @@ export default function BookingView() {
         {booking.payments.length === 0 ? (
           <p className="text-sm text-gray-700 mb-3">No payments recorded yet.</p>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm mb-3">
             <thead>
               <tr className="text-left text-gray-700 border-b text-xs uppercase">
@@ -131,6 +134,7 @@ export default function BookingView() {
               </tr>
             </tfoot>
           </table>
+          </div>
         )}
 
         <div className={`flex justify-between font-bold text-sm pt-2 border-t ${booking.balance_pence <= 0 ? 'text-green-600' : 'text-red-600'}`}>

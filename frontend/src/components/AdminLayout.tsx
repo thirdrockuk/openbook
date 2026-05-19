@@ -30,6 +30,7 @@ export default function AdminLayout() {
           </Link>
           <div className="mt-8 border-t border-gray-100 pt-4">
             <button
+              type="button"
               onClick={handleLogout}
               className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded"
             >

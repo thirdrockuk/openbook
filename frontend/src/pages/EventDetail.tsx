@@ -7,7 +7,7 @@ export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
   const { data: event, isLoading, error } = useEvent(id);
 
-  if (isLoading) return <div className="text-center py-12 text-gray-700">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-center py-12 text-gray-700">Loading…</div>;
   if (error || !event)
     return <div className="text-center py-12 text-red-500">Event not found.</div>;
 

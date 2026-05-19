@@ -25,6 +25,7 @@ export default function AdminEventForm() {
     banner_image_url: '',
     order_number_prefix: '',
   });
+  const [bannerError, setBannerError] = useState(false);
   const [templateBands, setTemplateBands] = useState<PriceBandTemplateEntry[]>([]);
 
   useEffect(() => {
@@ -85,8 +86,9 @@ export default function AdminEventForm() {
         {isEdit ? 'Edit Event' : 'New Event'}
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4 bg-white border rounded-lg p-6">
-        <Field label="Title">
+        <Field label="Title" htmlFor="ev-title">
           <input
+            id="ev-title"
             className="input"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -102,6 +104,7 @@ export default function AdminEventForm() {
               preview="edit"
               textareaProps={{
                 placeholder: 'Write your event description using Markdown...',
+                'aria-label': 'Event description (Markdown)',
               }}
             />
           </div>
@@ -109,16 +112,18 @@ export default function AdminEventForm() {
             Supports Markdown (headings, bold, lists, links, quotes).
           </p>
         </Field>
-        <Field label="Location">
+        <Field label="Location" htmlFor="ev-location">
           <input
+            id="ev-location"
             className="input"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
           />
         </Field>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Starts At">
+          <Field label="Starts At" htmlFor="ev-starts-at">
             <input
+              id="ev-starts-at"
               type="datetime-local"
               className="input"
               value={form.starts_at}
@@ -126,8 +131,9 @@ export default function AdminEventForm() {
               required
             />
           </Field>
-          <Field label="Ends At">
+          <Field label="Ends At" htmlFor="ev-ends-at">
             <input
+              id="ev-ends-at"
               type="datetime-local"
               className="input"
               value={form.ends_at}
@@ -136,8 +142,9 @@ export default function AdminEventForm() {
             />
           </Field>
         </div>
-        <Field label="Status">
+        <Field label="Status" htmlFor="ev-status">
           <select
+            id="ev-status"
             className="input"
             value={form.status}
             onChange={(e) => setForm({ ...form, status: e.target.value })}
@@ -148,16 +155,18 @@ export default function AdminEventForm() {
           </select>
         </Field>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Sales Start (optional)">
+          <Field label="Sales Start (optional)" htmlFor="ev-sales-start">
             <input
+              id="ev-sales-start"
               type="datetime-local"
               className="input"
               value={form.sales_start_at}
               onChange={(e) => setForm({ ...form, sales_start_at: e.target.value })}
             />
           </Field>
-          <Field label="Sales End (optional)">
+          <Field label="Sales End (optional)" htmlFor="ev-sales-end">
             <input
+              id="ev-sales-end"
               type="datetime-local"
               className="input"
               value={form.sales_end_at}
@@ -165,25 +174,27 @@ export default function AdminEventForm() {
             />
           </Field>
         </div>
-        <Field label="Banner Image URL (optional)">
+        <Field label="Banner Image URL (optional)" htmlFor="ev-banner-url">
           <input
+            id="ev-banner-url"
             className="input"
             type="url"
             placeholder="https://example.com/banner.jpg"
             value={form.banner_image_url}
-            onChange={(e) => setForm({ ...form, banner_image_url: e.target.value })}
+            onChange={(e) => { setForm({ ...form, banner_image_url: e.target.value }); setBannerError(false); }}
           />
-          {form.banner_image_url && (
+          {form.banner_image_url && !bannerError && (
             <img
               src={form.banner_image_url}
               alt="Banner preview"
               className="mt-2 rounded-lg w-full object-cover max-h-40"
-              onError={(e) => (e.currentTarget.style.display = 'none')}
+              onError={() => setBannerError(true)}
             />
           )}
         </Field>
-        <Field label="Order number prefix (optional)">
+        <Field label="Order number prefix (optional)" htmlFor="ev-order-prefix">
           <input
+            id="ev-order-prefix"
             className="input uppercase"
             placeholder="e.g. GBBO"
             maxLength={8}
@@ -203,12 +214,14 @@ export default function AdminEventForm() {
             {templateBands.map((band, index) => (
               <div key={index} className="grid grid-cols-[1fr_5rem_5rem_6rem_2rem] gap-2 items-center">
                 <input
+                  aria-label="Band label"
                   className="input text-sm"
                   placeholder="Label (e.g. Adult)"
                   value={band.label}
                   onChange={(e) => updateTemplateBand(index, 'label', e.target.value)}
                 />
                 <input
+                  aria-label="Minimum age"
                   className="input text-sm"
                   type="number"
                   min={0}
@@ -218,6 +231,7 @@ export default function AdminEventForm() {
                   onChange={(e) => updateTemplateBand(index, 'age_min', parseInt(e.target.value) || 0)}
                 />
                 <input
+                  aria-label="Maximum age"
                   className="input text-sm"
                   type="number"
                   min={0}
@@ -227,6 +241,7 @@ export default function AdminEventForm() {
                   onChange={(e) => updateTemplateBand(index, 'age_max', parseInt(e.target.value) || 0)}
                 />
                 <input
+                  aria-label="Qualifier (e.g. student)"
                   className="input text-sm"
                   placeholder="Qualifier"
                   value={band.qualifier ?? ''}
@@ -276,10 +291,10 @@ export default function AdminEventForm() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label htmlFor={htmlFor} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
       {children}
     </div>
   );

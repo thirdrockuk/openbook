@@ -60,7 +60,7 @@ export default function AdminFinanceReport() {
   }, [sortedOrders]);
 
   if (isEventLoading || isOrdersLoading) {
-    return <div className="text-gray-500">Loading...</div>;
+    return <div role="status" className="text-gray-500">Loading...</div>;
   }
 
   return (

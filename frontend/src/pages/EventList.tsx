@@ -4,7 +4,7 @@ import EventCard from '../components/EventCard';
 export default function EventList() {
   const { data: events, isLoading, error } = useEvents();
 
-  if (isLoading) return <div className="text-center py-12 text-gray-700">Loading events...</div>;
+  if (isLoading) return <div role="status" className="text-center py-12 text-gray-700">Loading events...</div>;
   if (error) return <div className="text-center py-12 text-red-500">Failed to load events.</div>;
   if (!events?.length) {
     return (

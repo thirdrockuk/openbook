@@ -100,8 +100,9 @@ export default function AttendeeForm({
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
+          <label htmlFor={`attendee-${index}-name`} className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
           <input
+            id={`attendee-${index}-name`}
             type="text"
             className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             value={attendee.attendee_name}
@@ -112,8 +113,9 @@ export default function AttendeeForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date of birth</label>
+          <label htmlFor={`attendee-${index}-dob`} className="block text-sm font-medium text-gray-700 mb-1">Date of birth</label>
           <input
+            id={`attendee-${index}-dob`}
             type="date"
             className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             value={attendee.attendee_dob}
@@ -123,8 +125,9 @@ export default function AttendeeForm({
         </div>
 
         <div className="sm:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ticket type</label>
+          <label htmlFor={`attendee-${index}-ticket`} className="block text-sm font-medium text-gray-700 mb-1">Ticket type</label>
           <select
+            id={`attendee-${index}-ticket`}
             className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             value={attendee.ticket_type_id}
             onChange={(e) => update('ticket_type_id', e.target.value)}
@@ -172,8 +175,9 @@ export default function AttendeeForm({
       {showRequirements && (
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Dietary requirements</label>
+            <label htmlFor={`attendee-${index}-dietary`} className="block text-xs font-medium text-gray-700 mb-1">Dietary requirements</label>
             <textarea
+              id={`attendee-${index}-dietary`}
               rows={2}
               className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               value={attendee.dietary_requirements ?? ''}
@@ -182,8 +186,9 @@ export default function AttendeeForm({
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Access requirements</label>
+            <label htmlFor={`attendee-${index}-access`} className="block text-xs font-medium text-gray-700 mb-1">Access requirements</label>
             <textarea
+              id={`attendee-${index}-access`}
               rows={2}
               className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               value={attendee.access_requirements ?? ''}

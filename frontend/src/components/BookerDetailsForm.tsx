@@ -18,8 +18,9 @@ export default function BookerDetailsForm({ details, onChange }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
+        <label htmlFor="booker-name" className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
         <input
+          id="booker-name"
           type="text"
           className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
           value={details.booker_name}
@@ -29,8 +30,9 @@ export default function BookerDetailsForm({ details, onChange }: Props) {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+        <label htmlFor="booker-email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
         <input
+          id="booker-email"
           type="email"
           className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
           value={details.booker_email}
@@ -40,8 +42,9 @@ export default function BookerDetailsForm({ details, onChange }: Props) {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Confirm email</label>
+        <label htmlFor="booker-email-confirm" className="block text-sm font-medium text-gray-700 mb-1">Confirm email</label>
         <input
+          id="booker-email-confirm"
           type="email"
           className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
           value={details.booker_email_confirm}
@@ -56,10 +59,11 @@ export default function BookerDetailsForm({ details, onChange }: Props) {
           )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="booker-phone" className="block text-sm font-medium text-gray-700 mb-1">
           Phone number <span className="text-gray-700">(optional)</span>
         </label>
         <input
+          id="booker-phone"
           type="tel"
           className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
           value={details.booker_phone}

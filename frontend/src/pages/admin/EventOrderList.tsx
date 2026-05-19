@@ -63,7 +63,7 @@ export default function AdminEventOrderList() {
     }
   }
 
-  if (isEventLoading || isOrdersLoading) return <div className="text-gray-500">Loading…</div>;
+  if (isEventLoading || isOrdersLoading) return <div role="status" className="text-gray-500">Loading…</div>;
 
   const orders = ordersPage?.items ?? [];
   const total = ordersPage?.total ?? 0;
@@ -125,36 +125,36 @@ export default function AdminEventOrderList() {
         </div>
       </div>
 
-      {actionError && <p className="text-sm text-red-600 mb-3">{actionError}</p>}
+      {actionError && <p role="alert" className="text-sm text-red-600 mb-3">{actionError}</p>}
 
       {!orders.length ? (
         <p className="text-gray-500">{search ? 'No orders match your search.' : 'No orders yet.'}</p>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+          <div className="bg-white rounded-lg border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
               <tr>
-                <th className="px-4 py-3 text-left">
+                <th className="px-4 py-3 text-left" aria-sort={sortCol === 'created_at' ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}>
                   <button type="button" onClick={() => handleSort('created_at')} className="inline-flex items-center hover:text-gray-700">
                     Date<SortIndicator col="created_at" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </th>
-                <th className="px-4 py-3 text-left">
+                <th className="px-4 py-3 text-left" aria-sort={sortCol === 'order_number' ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}>
                   <button type="button" onClick={() => handleSort('order_number')} className="inline-flex items-center hover:text-gray-700">
                     Order #<SortIndicator col="order_number" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </th>
-                <th className="px-4 py-3 text-left">
+                <th className="px-4 py-3 text-left" aria-sort={sortCol === 'booker_name' ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}>
                   <button type="button" onClick={() => handleSort('booker_name')} className="inline-flex items-center hover:text-gray-700">
                     Booker<SortIndicator col="booker_name" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </th>
-                <th className="px-4 py-3 text-left">
+                <th className="px-4 py-3 text-left" aria-sort={sortCol === 'status' ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}>
                   <button type="button" onClick={() => handleSort('status')} className="inline-flex items-center hover:text-gray-700">
                     Status<SortIndicator col="status" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </th>
-                <th className="px-4 py-3 text-right">
+                <th className="px-4 py-3 text-right" aria-sort={sortCol === 'total_pence' ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}>
                   <button type="button" onClick={() => handleSort('total_pence')} className="inline-flex items-center justify-end w-full hover:text-gray-700">
                     Total<SortIndicator col="total_pence" sortCol={sortCol} sortDir={sortDir} />
                   </button>

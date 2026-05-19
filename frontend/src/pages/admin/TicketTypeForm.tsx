@@ -152,13 +152,14 @@ export default function AdminTicketTypeForm() {
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         {submitError && (
-          <p className="text-sm text-red-600">{submitError}</p>
+          <p role="alert" className="text-sm text-red-600">{submitError}</p>
         )}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="font-semibold text-gray-800">Ticket Type Details</h2>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label htmlFor="tt-name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
             <input
+              id="tt-name"
               className="w-full border rounded px-3 py-2 text-sm"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -167,8 +168,9 @@ export default function AdminTicketTypeForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label htmlFor="tt-description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
+              id="tt-description"
               className="w-full border rounded px-3 py-2 text-sm"
               rows={2}
               value={form.description}
@@ -177,10 +179,11 @@ export default function AdminTicketTypeForm() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="tt-inventory" className="block text-sm font-medium text-gray-700 mb-1">
                 Inventory (leave blank = unlimited)
               </label>
               <input
+                id="tt-inventory"
                 type="number"
                 className="w-full border rounded px-3 py-2 text-sm"
                 value={form.inventory_total}
@@ -189,8 +192,9 @@ export default function AdminTicketTypeForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+              <label htmlFor="tt-sort-order" className="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
               <input
+                id="tt-sort-order"
                 type="number"
                 className="w-full border rounded px-3 py-2 text-sm"
                 value={form.sort_order}

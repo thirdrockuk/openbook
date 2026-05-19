@@ -68,7 +68,7 @@ export default function Checkout() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  if (isLoading) return <div className="text-center py-12">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-center py-12">Loading…</div>;
   if (!event) return <div className="text-center py-12 text-red-500">Event not found.</div>;
 
   const eventStart = new Date(event.starts_at);
@@ -224,6 +224,7 @@ export default function Checkout() {
           <div className="mt-6 flex items-center justify-between">
             <div className="text-lg font-semibold">Total: {formatPence(total)}</div>
             <button
+              type="button"
               onClick={() => setStep(2)}
               disabled={!validateStep1()}
               className="bg-sky-600 text-white px-6 py-2 rounded font-medium hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -241,12 +242,14 @@ export default function Checkout() {
           <BookerDetailsForm details={booker} onChange={setBooker} />
           <div className="mt-6 flex gap-4">
             <button
+              type="button"
               onClick={() => setStep(1)}
               className="border border-gray-700 px-6 py-2 rounded font-medium text-gray-700 hover:bg-white"
             >
               Back
             </button>
             <button
+              type="button"
               onClick={() => setStep(3)}
               disabled={!validateStep2()}
               className="bg-sky-600 text-white px-6 py-2 rounded font-medium hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -281,19 +284,21 @@ export default function Checkout() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 rounded p-3 mb-4 text-sm">
+            <div role="alert" className="bg-red-50 border border-red-200 text-red-700 rounded p-3 mb-4 text-sm">
               {error}
             </div>
           )}
 
           <div className="flex gap-4">
             <button
+              type="button"
               onClick={() => setStep(2)}
               className="border border-gray-700 px-6 py-2 rounded font-medium text-gray-700 hover:bg-white"
             >
               Back
             </button>
             <button
+              type="button"
               onClick={handleSubmit}
               disabled={submitting}
               className="bg-green-600 text-white px-8 py-2 rounded font-semibold hover:bg-green-700 disabled:opacity-50"

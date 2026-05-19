@@ -51,7 +51,7 @@ export default function AdminUserForm() {
     }
   }
 
-  if (isEditing && !initialised) return <div className="text-gray-500">Loading…</div>;
+  if (isEditing && !initialised) return <div role="status" className="text-gray-500">Loading…</div>;
 
   return (
     <div className="max-w-lg">
@@ -64,14 +64,15 @@ export default function AdminUserForm() {
 
       <form onSubmit={handleSubmit} className="bg-white border rounded-lg p-6 space-y-4">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded px-4 py-3">
+          <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-sm rounded px-4 py-3">
             {error}
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label htmlFor="user-email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <input
+            id="user-email"
             type="email"
             className="w-full border rounded px-3 py-2 text-sm"
             value={form.email}
@@ -81,10 +82,11 @@ export default function AdminUserForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="user-password" className="block text-sm font-medium text-gray-700 mb-1">
             Password{isEditing && <span className="text-gray-400 font-normal"> (leave blank to keep current)</span>}
           </label>
           <input
+            id="user-password"
             type="password"
             className="w-full border rounded px-3 py-2 text-sm"
             value={form.password}

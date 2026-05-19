@@ -21,7 +21,7 @@ export default function AdminEventHub() {
     }
   }
 
-  if (isLoading) return <div className="text-gray-500">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-gray-500">Loading…</div>;
   if (!event) return <div className="text-red-500">Event not found.</div>;
 
   const start = new Date(event.starts_at);
@@ -102,6 +102,7 @@ export default function AdminEventHub() {
             Edit
           </Link>
           <button
+            type="button"
             onClick={handleDelete}
             className="inline-block bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
           >

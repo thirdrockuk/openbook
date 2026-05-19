@@ -6,7 +6,7 @@ import StatusBadge from '../../components/StatusBadge';
 export default function AdminEventList() {
   const { data: events, isLoading } = useAdminEvents();
 
-  if (isLoading) return <div className="text-gray-500">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-gray-500">Loading…</div>;
 
   return (
     <div>
@@ -23,7 +23,7 @@ export default function AdminEventList() {
       {!events?.length ? (
         <p className="text-gray-500">No events yet.</p>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-white rounded-lg border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
               <tr>

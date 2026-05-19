@@ -6,7 +6,7 @@ export default function Confirmation() {
   const { id } = useParams<{ id: string }>();
   const { data: order, isLoading } = useOrder(id);
 
-  if (isLoading) return <div className="text-center py-12">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-center py-12">Loading…</div>;
   if (!order)
     return <div className="text-center py-12 text-red-500">Order not found.</div>;
 
@@ -20,6 +20,7 @@ export default function Confirmation() {
 
       <div className="bg-white rounded-lg border p-6 text-left mb-6">
         <h2 className="font-semibold text-gray-900 mb-4">Attendees</h2>
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-gray-700 border-b">
@@ -42,6 +43,7 @@ export default function Confirmation() {
             </tr>
           </tfoot>
         </table>
+        </div>
       </div>
 
       <p className="text-sm text-gray-700 mb-6">

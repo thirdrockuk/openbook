@@ -4,7 +4,7 @@ import { formatPence } from '../../utils/currency';
 export default function AdminDashboard() {
   const { data, isLoading } = useDashboard();
 
-  if (isLoading) return <div className="text-gray-500">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-gray-500">Loading…</div>;
 
   return (
     <div>

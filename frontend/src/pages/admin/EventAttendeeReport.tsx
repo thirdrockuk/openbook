@@ -197,7 +197,7 @@ export default function AdminEventAttendeeReport() {
   }
 
   if (isReportLoading) {
-    return <div className="text-gray-500">Loading...</div>;
+    return <div role="status" className="text-gray-500">Loading...</div>;
   }
 
   if (!report) {
@@ -262,7 +262,7 @@ export default function AdminEventAttendeeReport() {
           </div>
         </div>
 
-        {saveError && <p className="text-xs text-red-600 mb-2">{saveError}</p>}
+        {saveError && <p role="alert" className="text-xs text-red-600 mb-2">{saveError}</p>}
         {saveFeedback && <p className="text-xs text-green-700 mb-2">{saveFeedback}</p>}
 
         <div className="space-y-3">

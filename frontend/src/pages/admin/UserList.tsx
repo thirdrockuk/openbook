@@ -19,7 +19,7 @@ export default function AdminUserList() {
     }
   }
 
-  if (isLoading) return <div className="text-gray-500">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-gray-500">Loading…</div>;
 
   return (
     <div>
@@ -36,7 +36,7 @@ export default function AdminUserList() {
       {!users?.length ? (
         <p className="text-gray-500">No users found.</p>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-white rounded-lg border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
               <tr>
@@ -78,6 +78,7 @@ export default function AdminUserList() {
                     </Link>
                     {currentUser?.email !== user.email && (
                       <button
+                        type="button"
                         onClick={() => handleDelete(user.id)}
                         className="inline-block bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 ml-2"
                       >
