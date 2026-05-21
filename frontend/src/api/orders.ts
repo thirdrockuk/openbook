@@ -18,6 +18,7 @@ export async function createOrder(data: {
   booker_name: string;
   booker_email: string;
   booker_phone?: string;
+  payment_method?: string;
   attendees: {
     ticket_type_id: string;
     attendee_name: string;
@@ -31,8 +32,10 @@ export async function createOrder(data: {
   return res.data;
 }
 
-export async function confirmOrder(orderId: string): Promise<Order> {
-  const res = await apiClient.post<Order>(`/api/orders/${orderId}/confirm`);
+export async function confirmOrder(orderId: string, paymentIntentId?: string): Promise<Order> {
+  const res = await apiClient.post<Order>(`/api/orders/${orderId}/confirm`, {
+    payment_intent_id: paymentIntentId ?? null,
+  });
   return res.data;
 }
 
@@ -49,5 +52,10 @@ export function useBookingView(token: string | undefined) {
 
 export async function cancelOrder(orderId: string): Promise<Order> {
   const res = await apiClient.post<Order>(`/api/orders/${orderId}/cancel`);
+  return res.data;
+}
+
+export async function createPaymentIntent(orderId: string): Promise<{ client_secret: string }> {
+  const res = await apiClient.post<{ client_secret: string }>(`/api/orders/${orderId}/payment-intent`);
   return res.data;
 }

@@ -7,7 +7,7 @@ interface Props {
 
 export default function TicketTypePanel({ ticketType }: Props) {
   return (
-    <div className="border rounded-lg p-4 bg-white">
+    <div className="border border-gray-100 rounded-xl shadow-sm p-4 bg-white">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="font-semibold text-gray-900">{ticketType.name}</h3>
@@ -16,7 +16,7 @@ export default function TicketTypePanel({ ticketType }: Props) {
           )}
         </div>
         {ticketType.available !== undefined && ticketType.available !== null && (
-          <span className="text-xs text-gray-700 bg-white px-2 py-1 rounded">
+          <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-md font-medium">
             {ticketType.available} left
           </span>
         )}

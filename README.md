@@ -52,7 +52,7 @@ Edit `backend/.env` to set at minimum:
 ### 2. Start all services
 
 ```bash
-docker-compose up --build
+docker-compose up --build -d
 ```
 
 This starts PostgreSQL, runs migrations, starts the FastAPI server on port 8000, and the Vite dev server on port 5173.

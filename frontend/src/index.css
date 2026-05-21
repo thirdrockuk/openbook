@@ -7,3 +7,14 @@
     @apply w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500;
   }
 }
+
+@keyframes step-slide-from-right {
+  from { transform: translateX(36px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes step-slide-from-left {
+  from { transform: translateX(-36px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+.step-slide-forward  { animation: step-slide-from-right 0.22s ease-out; }
+.step-slide-backward { animation: step-slide-from-left  0.22s ease-out; }

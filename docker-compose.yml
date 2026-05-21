@@ -28,6 +28,7 @@ services:
       EMAIL_FROM_NAME: OpenBook
       APP_URL: http://localhost:5173
       ENVIRONMENT: development
+      STRIPE_SECRET_KEY: "sk_test_xxx"
     ports:
       - "8000:8000"
     depends_on:
@@ -49,6 +50,7 @@ services:
       - /app/node_modules
     environment:
       VITE_API_URL: http://localhost:8000
+      VITE_STRIPE_PUBLISHABLE_KEY: "pk_test_xxx"
 
 volumes:
   postgres_data:

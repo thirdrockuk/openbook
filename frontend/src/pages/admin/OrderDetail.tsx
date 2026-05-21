@@ -15,11 +15,11 @@ import { formatPence } from '../../utils/currency';
 import { formatDate } from '../../utils/date';
 
 const METHOD_LABELS: Record<string, string> = {
+  bank_transfer: 'Bank transfer',
+  card: 'Card payment',
   cash: 'Cash',
-  bank_transfer: 'Bank Transfer',
   cheque: 'Cheque',
   other: 'Other',
-  stub: 'Online',
 };
 
 export default function AdminOrderDetail() {
@@ -30,7 +30,7 @@ export default function AdminOrderDetail() {
 
   const [paymentForm, setPaymentForm] = useState({
     amountGbp: '',
-    method: 'cash',
+    method: 'bank_transfer',
     reference: '',
     note: '',
   });
@@ -202,41 +202,76 @@ export default function AdminOrderDetail() {
       <button
         type="button"
         onClick={() => navigate(-1)}
-        className="text-sm text-sky-600 hover:underline mb-4 block"
+        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 mb-5 transition-colors"
       >
-        ← Back to orders
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to orders
       </button>
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{order.order_number}</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {new Date(order.created_at).toLocaleString('en-GB')}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-gray-50 border rounded px-3 py-1">
-            <a
-              href={`/booking/${order.view_token}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-sky-600 hover:underline font-mono"
-            >
-              {`${window.location.origin}/booking/${order.view_token}`}
-            </a>
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className="text-xs text-gray-500 hover:text-gray-800 ml-1 shrink-0"
-              title="Copy link"
-            >
-              {linkCopied ? '✓' : '⎘'}
-            </button>
+
+      {/* Hero summary card */}
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-2xl font-bold text-gray-900">{order.order_number}</h1>
+              <StatusBadge status={order.status} />
+            </div>
+            <p className="text-sm text-gray-500">{new Date(order.created_at).toLocaleString('en-GB')}</p>
           </div>
-          <StatusBadge status={order.status} />
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Total</p>
+              <p className="text-lg font-bold text-gray-900">{formatPence(order.total_pence)}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Paid</p>
+              <p className="text-lg font-bold text-green-600">{formatPence(order.amount_paid_pence)}</p>
+            </div>
+            {order.balance_pence > 0 && (
+              <div className="text-right">
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Outstanding</p>
+                <p className="text-lg font-bold text-red-600">{formatPence(order.balance_pence)}</p>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
+          <a
+            href={`/booking/${order.view_token}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-sky-600 hover:underline font-mono truncate"
+          >
+            {`${window.location.origin}/booking/${order.view_token}`}
+          </a>
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="shrink-0 flex items-center gap-1 text-xs text-gray-500 hover:text-gray-800 border border-gray-200 rounded-md px-2 py-1 hover:bg-gray-50 transition-colors"
+            title="Copy link"
+          >
+            {linkCopied ? (
+              <>
+                <svg className="h-3 w-3 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+                Copied
+              </>
+            ) : (
+              <>
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                </svg>
+                Copy link
+              </>
+            )}
+          </button>
         </div>
       </div>
 
-      <div className="bg-white border rounded-lg p-6 mb-4">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 mb-4">
         <h2 className="font-semibold text-gray-800 mb-3">Booker Details</h2>
         <dl className="space-y-1 text-sm">
           <div className="flex gap-4">
@@ -253,10 +288,18 @@ export default function AdminOrderDetail() {
               <dd className="text-gray-800">{order.booker_phone}</dd>
             </div>
           )}
+          {order.payment_method && (
+            <div className="flex gap-4">
+              <dt className="text-gray-500 w-24">Payment</dt>
+              <dd className="text-gray-800">
+                {order.payment_method === 'bank_transfer' ? 'Bank transfer' : order.payment_method === 'card' ? 'Card' : order.payment_method}
+              </dd>
+            </div>
+          )}
         </dl>
       </div>
 
-      <div className="bg-white border rounded-lg p-6 mb-6">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 mb-6">
         <h2 className="font-semibold text-gray-800 mb-3">Attendees</h2>
         <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -302,13 +345,13 @@ export default function AdminOrderDetail() {
                             setPriceDraftByItemId((prev) => ({ ...prev, [item.id]: value }));
                             setPriceErrorByItemId((prev) => ({ ...prev, [item.id]: '' }));
                           }}
-                          className="w-24 border rounded px-2 py-1 text-xs text-right"
+                          className="w-24 border border-gray-200 rounded-lg px-2 py-1 text-xs text-right"
                         />
                         <button
                           type="button"
                           onClick={() => handleUpdateItemPrice(item.id, item.price_pence)}
                           disabled={savingPriceItemId === item.id}
-                          className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-50 disabled:opacity-50"
+                          className="text-xs px-2 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors disabled:opacity-50"
                         >
                           {savingPriceItemId === item.id ? 'Saving…' : 'Save'}
                         </button>
@@ -317,7 +360,7 @@ export default function AdminOrderDetail() {
                             type="button"
                             onClick={() => handleResetItemPrice(item.id)}
                             disabled={savingPriceItemId === item.id}
-                            className="text-xs px-2 py-1 rounded border border-sky-300 text-sky-700 hover:bg-sky-50 disabled:opacity-50"
+                            className="text-xs px-2 py-1 rounded-lg border border-sky-200 text-sky-700 hover:bg-sky-50 transition-colors disabled:opacity-50"
                           >
                             Reset
                           </button>
@@ -344,7 +387,7 @@ export default function AdminOrderDetail() {
                         <textarea
                           id={`dietary-${item.id}`}
                           rows={1}
-                          className="w-full border rounded px-2 py-1 text-xs resize-none"
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs resize-none"
                           value={getReqDraft(item.id, item.dietary_requirements, item.access_requirements).dietary}
                           onChange={(e) =>
                             setReqDraftByItemId((prev) => ({
@@ -367,7 +410,7 @@ export default function AdminOrderDetail() {
                         <textarea
                           id={`access-${item.id}`}
                           rows={1}
-                          className="w-full border rounded px-2 py-1 text-xs resize-none"
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs resize-none"
                           value={getReqDraft(item.id, item.dietary_requirements, item.access_requirements).access}
                           onChange={(e) =>
                             setReqDraftByItemId((prev) => ({
@@ -390,7 +433,7 @@ export default function AdminOrderDetail() {
                           type="button"
                           onClick={() => handleUpdateItemRequirements(item.id, item.dietary_requirements, item.access_requirements)}
                           disabled={savingReqItemId === item.id}
-                          className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-white disabled:opacity-50"
+                          className="text-xs px-2 py-1 rounded-lg border border-gray-200 hover:bg-white transition-colors disabled:opacity-50"
                         >
                           {savingReqItemId === item.id ? 'Saving…' : 'Save'}
                         </button>
@@ -422,7 +465,7 @@ export default function AdminOrderDetail() {
       </div>
 
       {/* Payments */}
-      <div className="bg-white border rounded-lg p-6 mb-4">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 mb-4">
         <h2 className="font-semibold text-gray-800 mb-3">Payments</h2>
 
         {order.payments.length === 0 ? (
@@ -451,15 +494,13 @@ export default function AdminOrderDetail() {
                   </td>
                   <td className="py-2 text-right">{formatPence(p.amount_pence)}</td>
                   <td className="py-2 text-right">
-                    {p.provider !== 'stub' && (
-                      <button
-                        type="button"
-                        onClick={() => handleDeletePayment(p.id)}
-                        className="text-red-400 hover:text-red-600 text-xs"
-                      >
-                        Remove
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePayment(p.id)}
+                      className="text-xs border border-red-200 text-red-600 bg-white px-2 py-0.5 rounded-lg hover:bg-red-50 transition-colors"
+                    >
+                      Remove
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -518,8 +559,8 @@ export default function AdminOrderDetail() {
                   value={paymentForm.method}
                   onChange={(e) => setPaymentForm({ ...paymentForm, method: e.target.value })}
                 >
+                  <option value="bank_transfer">Bank transfer</option>
                   <option value="cash">Cash</option>
-                  <option value="bank_transfer">Bank Transfer</option>
                   <option value="cheque">Cheque</option>
                   <option value="other">Other</option>
                 </select>
@@ -552,7 +593,7 @@ export default function AdminOrderDetail() {
             <button
               type="submit"
               disabled={submitting}
-              className="bg-sky-600 text-white px-5 py-1.5 rounded text-sm font-medium hover:bg-sky-700 disabled:opacity-50"
+              className="bg-sky-600 text-white px-5 py-1.5 rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-50"
             >
               {submitting ? 'Saving…' : 'Record Payment'}
             </button>
@@ -564,8 +605,11 @@ export default function AdminOrderDetail() {
         <button
           type="button"
           onClick={handleCancel}
-          className="bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700"
+          className="flex items-center gap-2 border border-red-200 text-red-600 bg-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
         >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
           Cancel Order
         </button>
       ) : null}

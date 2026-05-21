@@ -8,7 +8,7 @@ interface Props {
 export default function EventCard({ event }: Props) {
   const start = new Date(event.starts_at);
   return (
-    <article className="group overflow-hidden rounded-xl border border-gray-700 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <article className="group overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       {event.banner_image_url ? (
         <img
           src={event.banner_image_url}
@@ -16,11 +16,11 @@ export default function EventCard({ event }: Props) {
           className="h-44 w-full object-cover"
         />
       ) : (
-        <div className="h-44 w-full bg-gradient-to-br from-indigo-100 via-white to-sky-100" />
+        <div className="h-44 w-full bg-gradient-to-br from-sky-100 via-white to-sky-50" />
       )}
 
       <div className="p-5">
-        <p className="mb-2 inline-flex rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
+        <p className="mb-2 inline-flex rounded-full bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700">
           {start.toLocaleDateString('en-GB', {
             weekday: 'short',
             day: 'numeric',
@@ -37,7 +37,7 @@ export default function EventCard({ event }: Props) {
 
         <Link
           to={`/events/${event.id}`}
-          className="mt-5 inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
+          className="mt-5 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-700"
         >
           View details
         </Link>

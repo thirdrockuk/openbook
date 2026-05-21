@@ -24,6 +24,10 @@ export default function AdminEventForm() {
     sales_end_at: '',
     banner_image_url: '',
     order_number_prefix: '',
+    allow_bank_transfer: true,
+    allow_card_payment: false,
+    bank_transfer_details: '',
+    stripe_account_id: '',
   });
   const [bannerError, setBannerError] = useState(false);
   const [templateBands, setTemplateBands] = useState<PriceBandTemplateEntry[]>([]);
@@ -41,6 +45,10 @@ export default function AdminEventForm() {
         sales_end_at: existing.sales_end_at?.slice(0, 16) ?? '',
         banner_image_url: existing.banner_image_url ?? '',
         order_number_prefix: existing.order_number_prefix ?? '',
+        allow_bank_transfer: existing.allow_bank_transfer,
+        allow_card_payment: existing.allow_card_payment,
+        bank_transfer_details: existing.bank_transfer_details ?? '',
+        stripe_account_id: existing.stripe_account_id ?? '',
       });
       setTemplateBands(existing.price_band_template ?? []);
     }
@@ -66,6 +74,7 @@ export default function AdminEventForm() {
       sales_end_at: form.sales_end_at || null,
       banner_image_url: form.banner_image_url || null,
       order_number_prefix: form.order_number_prefix.trim().toUpperCase() || null,
+      stripe_account_id: form.stripe_account_id.trim() || null,
       price_band_template: templateBands.map((b) => ({
         ...b,
         qualifier: b.qualifier || null,
@@ -81,133 +90,203 @@ export default function AdminEventForm() {
   }
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        {isEdit ? 'Edit Event' : 'New Event'}
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white border rounded-lg p-6">
-        <Field label="Title" htmlFor="ev-title">
-          <input
-            id="ev-title"
-            className="input"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            required
-          />
-        </Field>
-        <Field label="Description">
-          <div data-color-mode="light">
-            <MDEditor
-              value={form.description}
-              onChange={(value) => setForm({ ...form, description: value ?? '' })}
-              height={280}
-              preview="edit"
-              textareaProps={{
-                placeholder: 'Write your event description using Markdown...',
-                'aria-label': 'Event description (Markdown)',
-              }}
+    <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">{isEdit ? 'Edit Event' : 'New Event'}</h1>
+        <p className="text-sm text-gray-500 mt-1">{isEdit ? 'Update event details' : 'Create a new event'}</p>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+
+        {/* Section: Event details */}
+        <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 space-y-4">
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Event details</h2>
+          <Field label="Title" htmlFor="ev-title">
+            <input
+              id="ev-title"
+              className="input"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              required
             />
+          </Field>
+          <Field label="Description">
+            <div data-color-mode="light">
+              <MDEditor
+                value={form.description}
+                onChange={(value) => setForm({ ...form, description: value ?? '' })}
+                height={280}
+                preview="edit"
+                textareaProps={{
+                  placeholder: 'Write your event description using Markdown...',
+                  'aria-label': 'Event description (Markdown)',
+                }}
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Supports Markdown (headings, bold, lists, links, quotes).
+            </p>
+          </Field>
+          <Field label="Location" htmlFor="ev-location">
+            <input
+              id="ev-location"
+              className="input"
+              value={form.location}
+              onChange={(e) => setForm({ ...form, location: e.target.value })}
+            />
+          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Starts At" htmlFor="ev-starts-at">
+              <input
+                id="ev-starts-at"
+                type="datetime-local"
+                className="input"
+                value={form.starts_at}
+                onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
+                required
+              />
+            </Field>
+            <Field label="Ends At" htmlFor="ev-ends-at">
+              <input
+                id="ev-ends-at"
+                type="datetime-local"
+                className="input"
+                value={form.ends_at}
+                onChange={(e) => setForm({ ...form, ends_at: e.target.value })}
+                required
+              />
+            </Field>
           </div>
-          <p className="mt-1 text-xs text-gray-500">
-            Supports Markdown (headings, bold, lists, links, quotes).
-          </p>
-        </Field>
-        <Field label="Location" htmlFor="ev-location">
-          <input
-            id="ev-location"
-            className="input"
-            value={form.location}
-            onChange={(e) => setForm({ ...form, location: e.target.value })}
-          />
-        </Field>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Starts At" htmlFor="ev-starts-at">
-            <input
-              id="ev-starts-at"
-              type="datetime-local"
+          <Field label="Status" htmlFor="ev-status">
+            <select
+              id="ev-status"
               className="input"
-              value={form.starts_at}
-              onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
-              required
-            />
-          </Field>
-          <Field label="Ends At" htmlFor="ev-ends-at">
-            <input
-              id="ev-ends-at"
-              type="datetime-local"
-              className="input"
-              value={form.ends_at}
-              onChange={(e) => setForm({ ...form, ends_at: e.target.value })}
-              required
-            />
+              value={form.status}
+              onChange={(e) => setForm({ ...form, status: e.target.value })}
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
           </Field>
         </div>
-        <Field label="Status" htmlFor="ev-status">
-          <select
-            id="ev-status"
-            className="input"
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </Field>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Sales Start (optional)" htmlFor="ev-sales-start">
+
+        {/* Section: Sales & appearance */}
+        <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 space-y-4">
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Sales &amp; appearance</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Sales Start (optional)" htmlFor="ev-sales-start">
+              <input
+                id="ev-sales-start"
+                type="datetime-local"
+                className="input"
+                value={form.sales_start_at}
+                onChange={(e) => setForm({ ...form, sales_start_at: e.target.value })}
+              />
+            </Field>
+            <Field label="Sales End (optional)" htmlFor="ev-sales-end">
+              <input
+                id="ev-sales-end"
+                type="datetime-local"
+                className="input"
+                value={form.sales_end_at}
+                onChange={(e) => setForm({ ...form, sales_end_at: e.target.value })}
+              />
+            </Field>
+          </div>
+          <Field label="Banner Image URL (optional)" htmlFor="ev-banner-url">
             <input
-              id="ev-sales-start"
-              type="datetime-local"
+              id="ev-banner-url"
               className="input"
-              value={form.sales_start_at}
-              onChange={(e) => setForm({ ...form, sales_start_at: e.target.value })}
+              type="url"
+              placeholder="https://example.com/banner.jpg"
+              value={form.banner_image_url}
+              onChange={(e) => { setForm({ ...form, banner_image_url: e.target.value }); setBannerError(false); }}
             />
+            {form.banner_image_url && !bannerError && (
+              <img
+                src={form.banner_image_url}
+                alt="Banner preview"
+                className="mt-2 rounded-lg w-full object-cover max-h-40"
+                onError={() => setBannerError(true)}
+              />
+            )}
           </Field>
-          <Field label="Sales End (optional)" htmlFor="ev-sales-end">
+          <Field label="Order number prefix (optional)" htmlFor="ev-order-prefix">
             <input
-              id="ev-sales-end"
-              type="datetime-local"
-              className="input"
-              value={form.sales_end_at}
-              onChange={(e) => setForm({ ...form, sales_end_at: e.target.value })}
+              id="ev-order-prefix"
+              className="input uppercase"
+              placeholder="e.g. GBBO"
+              maxLength={8}
+              value={form.order_number_prefix}
+              onChange={(e) => setForm({ ...form, order_number_prefix: e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase() })}
             />
+            <p className="mt-1 text-xs text-gray-500">
+              If set, order numbers will be prefixed, e.g. <span className="font-mono">GBBO-00001</span>. Leave blank for plain numbers like <span className="font-mono">00001</span>.
+            </p>
           </Field>
         </div>
-        <Field label="Banner Image URL (optional)" htmlFor="ev-banner-url">
-          <input
-            id="ev-banner-url"
-            className="input"
-            type="url"
-            placeholder="https://example.com/banner.jpg"
-            value={form.banner_image_url}
-            onChange={(e) => { setForm({ ...form, banner_image_url: e.target.value }); setBannerError(false); }}
-          />
-          {form.banner_image_url && !bannerError && (
-            <img
-              src={form.banner_image_url}
-              alt="Banner preview"
-              className="mt-2 rounded-lg w-full object-cover max-h-40"
-              onError={() => setBannerError(true)}
+
+        {/* Section: Payment methods */}
+        <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 space-y-3">
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Payment methods</h2>
+          <p className="text-xs text-gray-500">Select which payment methods customers can use at checkout.</p>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              className="mt-0.5 rounded"
+              checked={form.allow_bank_transfer}
+              onChange={(e) => setForm({ ...form, allow_bank_transfer: e.target.checked })}
             />
+            <div>
+              <p className="text-sm font-medium text-gray-900">Bank transfer</p>
+              <p className="text-xs text-gray-500">Customer pays by bank transfer after booking</p>
+            </div>
+          </label>
+          {form.allow_bank_transfer && (
+            <div className="ml-7">
+              <label htmlFor="ev-bank-details" className="block text-xs font-medium text-gray-700 mb-1">Bank transfer details</label>
+              <textarea
+                id="ev-bank-details"
+                rows={3}
+                className="input text-sm w-full"
+                placeholder="e.g. Account name: My Organisation&#10;Sort code: 12-34-56&#10;Account number: 12345678"
+                value={form.bank_transfer_details}
+                onChange={(e) => setForm({ ...form, bank_transfer_details: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">Shown to the customer on the confirmation page.</p>
+            </div>
           )}
-        </Field>
-        <Field label="Order number prefix (optional)" htmlFor="ev-order-prefix">
-          <input
-            id="ev-order-prefix"
-            className="input uppercase"
-            placeholder="e.g. GBBO"
-            maxLength={8}
-            value={form.order_number_prefix}
-            onChange={(e) => setForm({ ...form, order_number_prefix: e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase() })}
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            If set, order numbers will be prefixed, e.g. <span className="font-mono">GBBO-00001</span>. Leave blank for plain numbers like <span className="font-mono">00001</span>.
-          </p>
-        </Field>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Price band template</label>
-          <p className="text-xs text-gray-500 mb-3">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              className="mt-0.5 rounded"
+              checked={form.allow_card_payment}
+              onChange={(e) => setForm({ ...form, allow_card_payment: e.target.checked })}
+            />
+            <div>
+              <p className="text-sm font-medium text-gray-900">Card payment</p>
+              <p className="text-xs text-gray-500">Customer pays by card via Stripe</p>
+            </div>
+          </label>
+          {form.allow_card_payment && (
+            <div className="ml-7">
+              <label htmlFor="ev-stripe-account" className="block text-xs font-medium text-gray-700 mb-1">Stripe account ID (optional)</label>
+              <input
+                id="ev-stripe-account"
+                className="input text-sm"
+                placeholder="acct_xxxxxxxxxxxxxxxx"
+                value={form.stripe_account_id}
+                onChange={(e) => setForm({ ...form, stripe_account_id: e.target.value })}
+              />
+                <p className="mt-1 text-xs text-gray-500">Leave blank to use the default account.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Section: Price band template */}
+        <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6">
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-1">Price band template</h2>
+          <p className="text-xs text-gray-500 mb-4">
             Define the age bands for this event. These will pre-populate the bands when creating a new ticket type.
           </p>
           <div className="space-y-2">
@@ -271,17 +350,18 @@ export default function AdminEventForm() {
             + Add band
           </button>
         </div>
-        <div className="flex gap-3 pt-2">
+
+        <div className="flex gap-3 pb-4">
           <button
             type="submit"
-            className="bg-sky-600 text-white px-6 py-2 rounded font-medium hover:bg-sky-700"
+            className="bg-sky-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-50"
           >
-            {isEdit ? 'Save Changes' : 'Create Event'}
+            {isEdit ? 'Save changes' : 'Create event'}
           </button>
           <button
             type="button"
             onClick={() => navigate('/admin/events')}
-            className="border border-gray-300 px-6 py-2 rounded text-gray-700 hover:bg-gray-50"
+            className="border border-gray-200 px-6 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>

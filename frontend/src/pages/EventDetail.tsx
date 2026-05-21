@@ -7,7 +7,7 @@ export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
   const { data: event, isLoading, error } = useEvent(id);
 
-  if (isLoading) return <div role="status" className="text-center py-12 text-gray-700">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-center py-12 text-gray-500">Loading…</div>;
   if (error || !event)
     return <div className="text-center py-12 text-red-500">Event not found.</div>;
 
@@ -30,7 +30,7 @@ export default function EventDetail() {
   return (
     <div className="pb-24 sm:pb-0">
       {event.banner_image_url && (
-        <div className="mb-6 overflow-hidden bg-white">
+        <div className="-mx-6 mb-1 overflow-hidden bg-white">
           <img
             src={event.banner_image_url}
             alt={event.title}
@@ -39,10 +39,8 @@ export default function EventDetail() {
         </div>
       )}
 
-      <div className="mx-auto">
-        <div className="mb-4">
-          <div>
-            <p className="text-xl sm:text-2xl text-gray-700 mb-1">
+        <div className="-mx-6 mb-1 bg-gray-50 border border-gray-100 px-11 py-4">
+          <p className="text-xl sm:text-2xl text-gray-800 mb-1">
               {start.toLocaleDateString('en-GB', {
                 weekday: 'long',
                 year: 'numeric',
@@ -51,7 +49,7 @@ export default function EventDetail() {
               })}{' '}
               — {end.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
-            <p className="text-gray-700 inline-flex items-center gap-1.5">
+            <p className="text-gray-800 inline-flex items-center gap-1.5">
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
@@ -67,11 +65,10 @@ export default function EventDetail() {
               </svg>
               <span>{event.location?.trim() || 'TBC'}</span>
             </p>
-          </div>
         </div>
 
-        <div className="relative left-1/2 right-1/2 mb-8 -ml-[50vw] -mr-[50vw] w-screen bg-sky-600 py-8">
-          <div className="mx-auto max-w-[1172px] px-4 lg:px-0">
+        <div className="-mx-6 mb-1 bg-sky-600 py-8">
+          <div className="px-11">
             <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
               <div className="lg:col-span-9">
                 <div className="text-base text-white">
@@ -109,16 +106,16 @@ export default function EventDetail() {
                   <div className="mt-6">
                     <Link
                       to={`/events/${event.id}/checkout`}
-                      className="inline-flex items-center rounded-lg border-2 border-white bg-white px-7 py-3 text-base font-semibold text-sky-600 shadow-sm hover:bg-sky-50"
+                      className="inline-flex items-center rounded-lg border-2 border-white bg-white px-7 py-3 text-base font-semibold text-sky-600 shadow-sm hover:bg-sky-50 transition-colors"
                     >
                       Make a booking
                     </Link>
                   </div>
                 )}
-            </div>
+              </div>
               {hasActiveTicketTypes && (
                 <div className="lg:col-span-3">
-                  <div className="rounded-lg bg-white p-4 text-gray-700 shadow-sm">
+                  <div className="rounded-xl bg-white border border-gray-100 p-4 text-gray-700 shadow-sm">
                     <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-900 mb-2">Ticket prices</h3>
                     <div className="space-y-3">
                       {ticketPriceTiers.map((ticket) => (
@@ -146,11 +143,11 @@ export default function EventDetail() {
           </div>
         </div>
 
-        <section className="mb-8">
+        <div className="-mx-6 mb-8 bg-gray-50 border border-gray-100 px-11 py-4">
           <h2 className="text-xl font-semibold text-gray-900 mb-3">Location</h2>
           <p className="text-gray-700 mb-3">{locationText || 'TBC'}</p>
           {mapEmbedUrl ? (
-            <div className="overflow-hidden rounded-xl border border-gray-700 bg-white">
+            <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
               <iframe
                 title={`Map for ${event.title}`}
                 src={mapEmbedUrl}
@@ -162,15 +159,13 @@ export default function EventDetail() {
           ) : (
             <p className="text-sm text-gray-700">Add an event location to show a map.</p>
           )}
-        </section>
-
-      </div>
+        </div>
 
       {hasActiveTicketTypes && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-gray-700 bg-white/95 px-4 py-3 backdrop-blur sm:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-gray-100 bg-white/95 px-4 py-3 backdrop-blur sm:hidden">
           <Link
             to={`/events/${event.id}/checkout`}
-            className="block w-full text-center bg-sky-600 text-white px-6 py-3.5 rounded-lg text-base font-semibold hover:bg-sky-700"
+            className="block w-full text-center bg-sky-600 text-white px-6 py-3.5 rounded-lg text-base font-semibold hover:bg-sky-700 transition-colors"
           >
             Make a booking
           </Link>

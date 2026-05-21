@@ -24,6 +24,10 @@ class EventBase(BaseModel):
     sales_end_at: Optional[datetime] = None
     banner_image_url: Optional[str] = None
     order_number_prefix: Optional[str] = None
+    allow_bank_transfer: bool = True
+    allow_card_payment: bool = False
+    bank_transfer_details: str = ""
+    stripe_account_id: Optional[str] = None
     price_band_template: List[PriceBandTemplateEntry] = []
 
 
@@ -42,6 +46,10 @@ class EventUpdate(BaseModel):
     sales_end_at: Optional[datetime] = None
     banner_image_url: Optional[str] = None
     order_number_prefix: Optional[str] = None
+    allow_bank_transfer: Optional[bool] = None
+    allow_card_payment: Optional[bool] = None
+    bank_transfer_details: Optional[str] = None
+    stripe_account_id: Optional[str] = None
     price_band_template: Optional[List[PriceBandTemplateEntry]] = None
 
 

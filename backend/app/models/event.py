@@ -26,6 +26,10 @@ class Event(SQLModel, table=True):
     sales_end_at: Optional[datetime] = None
     banner_image_url: Optional[str] = None
     order_number_prefix: Optional[str] = None
+    allow_bank_transfer: bool = Field(default=True)
+    allow_card_payment: bool = Field(default=False)
+    bank_transfer_details: str = ""
+    stripe_account_id: Optional[str] = None
     attendee_report_age_tabs: List[dict] = Field(
         default_factory=list,
         sa_column=Column(JSON, nullable=False),

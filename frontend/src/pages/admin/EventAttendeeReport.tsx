@@ -197,7 +197,7 @@ export default function AdminEventAttendeeReport() {
   }
 
   if (isReportLoading) {
-    return <div role="status" className="text-gray-500">Loading...</div>;
+    return <div role="status" className="text-gray-500">Loading…</div>;
   }
 
   if (!report) {
@@ -207,24 +207,31 @@ export default function AdminEventAttendeeReport() {
   return (
     <div>
       <div className="mb-6">
-        <Link to={`/admin/events/${eventId}`} className="text-sm text-sky-600 hover:underline">
-          ← Back to event
+        <Link
+          to={`/admin/events/${eventId}`}
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 mb-2 transition-colors"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Back to event
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-1">Attendee age report</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          {report.event_title} | Event date: {formatDate(report.event_starts_at)}
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">{report.event_title}</h1>
+        <div className="flex items-center gap-2 mt-1">
+          <p className="text-sm text-gray-500">Attendee report</p>
+          <span className="text-xs font-medium bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded-full">{report.attendees.length}</span>
+        </div>
       </div>
 
-      <div className="bg-white border rounded-lg p-5 mb-4">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-5 mb-4">
         <div className="flex items-center justify-between gap-4 flex-wrap mb-3">
           <h2 className="font-semibold text-gray-800">Report scope</h2>
-          <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+          <label className="inline-flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={includePending}
               onChange={(e) => setIncludePending(e.target.checked)}
-              className="h-4 w-4"
+              className="h-4 w-4 rounded"
             />
             Include pending orders
           </label>
@@ -235,44 +242,47 @@ export default function AdminEventAttendeeReport() {
         </p>
       </div>
 
-      <div className="bg-white border rounded-lg p-5 mb-4">
-        <div className="flex items-center justify-between gap-3 mb-3">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-5 mb-4">
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
           <h2 className="font-semibold text-gray-800">Age tabs</h2>
           <div className="flex items-center gap-2">
             {isDirty && (
-              <span className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+              <span className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1">
                 Unsaved changes
               </span>
             )}
             <button
               type="button"
               onClick={addTab}
-              className="text-sm px-3 py-1.5 rounded bg-sky-600 text-white hover:bg-sky-700"
+              className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-sky-600 text-white hover:bg-sky-700 transition-colors"
             >
-              + Add Tab
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Add tab
             </button>
             <button
               type="button"
               onClick={handleSaveTabs}
               disabled={!isDirty || isSaving}
-              className="text-sm px-3 py-1.5 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:text-gray-400 disabled:border-gray-200 disabled:hover:bg-transparent"
+              className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:text-gray-400 disabled:border-gray-100 transition-colors"
             >
-              {isSaving ? 'Saving...' : 'Save tabs'}
+              {isSaving ? 'Saving…' : 'Save tabs'}
             </button>
           </div>
         </div>
 
-        {saveError && <p role="alert" className="text-xs text-red-600 mb-2">{saveError}</p>}
-        {saveFeedback && <p className="text-xs text-green-700 mb-2">{saveFeedback}</p>}
+        {saveError && <p role="alert" className="text-xs text-red-600 mb-3">{saveError}</p>}
+        {saveFeedback && <p className="text-xs text-green-700 mb-3">{saveFeedback}</p>}
 
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {ageTabs.map((tab) => (
             <div key={tab.id} className="grid grid-cols-1 md:grid-cols-12 gap-2">
               <input
                 type="text"
                 value={tab.label}
                 onChange={(e) => updateTab(tab.id, { label: e.target.value })}
-                className="border rounded px-3 py-2 text-sm md:col-span-6"
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm md:col-span-6 focus:outline-none focus:ring-2 focus:ring-sky-500"
                 placeholder="Tab label"
               />
               <input
@@ -280,7 +290,7 @@ export default function AdminEventAttendeeReport() {
                 min={0}
                 value={tab.minAge}
                 onChange={(e) => updateTab(tab.id, { minAge: parseAgeInput(e.target.value) })}
-                className="border rounded px-3 py-2 text-sm md:col-span-2"
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm md:col-span-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
                 placeholder="Min age"
               />
               <input
@@ -288,14 +298,14 @@ export default function AdminEventAttendeeReport() {
                 min={0}
                 value={tab.maxAge}
                 onChange={(e) => updateTab(tab.id, { maxAge: parseAgeInput(e.target.value) })}
-                className="border rounded px-3 py-2 text-sm md:col-span-2"
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm md:col-span-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
                 placeholder="Max age"
               />
               <button
                 type="button"
                 onClick={() => removeTab(tab.id)}
                 disabled={ageTabs.length <= 1}
-                className="md:col-span-2 text-sm px-3 py-2 rounded border text-red-600 border-red-200 hover:bg-red-50 disabled:text-gray-300 disabled:border-gray-200 disabled:hover:bg-transparent"
+                className="md:col-span-2 text-sm px-3 py-2 rounded-lg border border-red-200 text-red-600 bg-white hover:bg-red-50 disabled:text-gray-300 disabled:border-gray-100 transition-colors"
               >
                 Remove
               </button>
@@ -303,25 +313,28 @@ export default function AdminEventAttendeeReport() {
           ))}
         </div>
 
-        <p className="text-xs text-gray-500 mt-3">
+        <p className="text-xs text-gray-400 mt-3">
           Ranges are inclusive. If tabs overlap, attendees will appear in each matching tab.
         </p>
       </div>
 
-      <div className="bg-white border rounded-lg p-5">
-        <div className="flex flex-wrap gap-2 mb-4">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-5">
+        <div className="flex flex-wrap gap-2 mb-5">
           {tabsWithAttendees.map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setActiveTabId(tab.id)}
-              className={`px-3 py-1.5 rounded text-sm border ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 tab.id === activeTabId
-                  ? 'bg-sky-600 text-white border-sky-600'
-                  : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
+                  ? 'bg-sky-600 text-white shadow-sm'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              {(tab.label || 'Untitled').trim()} ({tab.attendees.length})
+              {(tab.label || 'Untitled').trim()}
+              <span className={`text-xs px-1.5 py-0.5 rounded-full ${tab.id === activeTabId ? 'bg-sky-500 text-white' : 'bg-white text-gray-500'}`}>
+                {tab.attendees.length}
+              </span>
             </button>
           ))}
         </div>
@@ -330,31 +343,31 @@ export default function AdminEventAttendeeReport() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-gray-500 border-b text-xs uppercase">
-                  <th className="pb-2">Attendee</th>
-                  <th className="pb-2">Age</th>
-                  <th className="pb-2">DOB</th>
-                  <th className="pb-2">Ticket</th>
-                  <th className="pb-2">Booker</th>
-                  <th className="pb-2">Order</th>
+                <tr className="border-b border-gray-100">
+                  <th className="pb-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Attendee</th>
+                  <th className="pb-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Age</th>
+                  <th className="pb-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">DOB</th>
+                  <th className="pb-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Ticket</th>
+                  <th className="pb-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Booker</th>
+                  <th className="pb-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Order</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-50">
                 {activeTab.attendees.map((attendee, index) => (
-                  <tr key={`${activeTab.id}-${attendee.order_id}-${index}`} className="border-b">
-                    <td className="py-2 font-medium text-gray-900">{attendee.attendee_name}</td>
-                    <td className="py-2">{attendee.attendee_age}</td>
-                    <td className="py-2 text-gray-500">{formatDate(attendee.attendee_dob)}</td>
-                    <td className="py-2 text-gray-500">
+                  <tr key={`${activeTab.id}-${attendee.order_id}-${index}`} className="hover:bg-gray-50 transition-colors">
+                    <td className="py-3 font-medium text-gray-900">{attendee.attendee_name}</td>
+                    <td className="py-3 text-gray-700">{attendee.attendee_age}</td>
+                    <td className="py-3 text-gray-500">{formatDate(attendee.attendee_dob)}</td>
+                    <td className="py-3 text-gray-500">
                       {attendee.ticket_type_name ?? 'Unknown ticket'}
                       {attendee.price_band_label ? ` (${attendee.price_band_label})` : ''}
                     </td>
-                    <td className="py-2">
+                    <td className="py-3">
                       <div className="text-gray-900">{attendee.booker_name}</div>
                       <div className="text-xs text-gray-500">{attendee.booker_email}</div>
                     </td>
-                    <td className="py-2">
-                      <div className="flex items-center gap-2">
+                    <td className="py-3">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <Link
                           to={`/admin/orders/${attendee.order_id}`}
                           className="text-sky-600 hover:underline text-xs font-mono"
@@ -370,13 +383,18 @@ export default function AdminEventAttendeeReport() {
             </table>
           </div>
         ) : (
-          <p className="text-gray-500 text-sm">No attendees in this age tab.</p>
+          <div className="text-center py-8">
+            <p className="text-gray-400 text-sm">No attendees in this age tab.</p>
+          </div>
         )}
 
         {outsideDefinedRanges.length > 0 && (
-          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 mt-4">
-            {outsideDefinedRanges.length} attendee(s) are outside all currently defined tabs.
-          </p>
+          <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 mt-4">
+            <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+            {outsideDefinedRanges.length} attendee{outsideDefinedRanges.length !== 1 ? 's are' : ' is'} outside all currently defined tabs.
+          </div>
         )}
       </div>
     </div>

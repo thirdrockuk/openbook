@@ -33,6 +33,7 @@ class OrderCreate(BaseModel):
     booker_name: str
     booker_email: str
     booker_phone: Optional[str] = None
+    payment_method: Optional[str] = None
     attendees: List[AttendeeInput]
 
 
@@ -90,6 +91,7 @@ class OrderRead(BaseModel):
     confirmed_at: Optional[datetime] = None
     expires_at: datetime
     view_token: uuid.UUID
+    payment_method: Optional[str] = None
     order_items: List[OrderItemRead] = []
 
     model_config = {"from_attributes": True}

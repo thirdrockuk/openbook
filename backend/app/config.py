@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     email_from_address: str = "openbook@yourdomain.com"
     email_from_name: str = "OpenBook"
 
+    # Stripe
+    stripe_secret_key: str = ""
+
     # App
     app_name: str = "OpenBook"
     app_url: str = "http://localhost:5173"

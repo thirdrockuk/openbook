@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, field_validator
 
-VALID_METHODS = {"cash", "bank_transfer", "cheque", "other"}
+VALID_METHODS = {"bank_transfer", "card", "cash", "cheque", "other"}
 
 
 class PaymentCreate(BaseModel):

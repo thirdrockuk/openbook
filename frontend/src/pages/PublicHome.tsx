@@ -4,7 +4,7 @@ import { useEvents } from '../api/events';
 export default function PublicHome() {
   const { data: events, isLoading, error } = useEvents();
 
-  if (isLoading) return <div role="status" className="text-center py-12 text-gray-700">Loading event...</div>;
+  if (isLoading) return <div role="status" className="text-center py-12 text-gray-500">Loading…</div>;
   if (error) return <div className="text-center py-12 text-red-500">Failed to load event.</div>;
   if (!events?.length) return <div className="text-center py-12 text-gray-700">No events available.</div>;
 

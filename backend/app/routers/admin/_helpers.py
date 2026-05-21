@@ -39,6 +39,7 @@ def _order_to_admin_read(order: Order) -> OrderReadAdmin:
         confirmed_at=order.confirmed_at,
         expires_at=order.expires_at,
         view_token=order.view_token,
+        payment_method=order.payment_method,
         order_items=[OrderItemRead.from_item(i) for i in order.order_items],
         payments=[PaymentRead.model_validate(p) for p in order.payments],
         amount_paid_pence=amount_paid,

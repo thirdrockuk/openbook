@@ -73,7 +73,13 @@ def get_event(
     event = session.get(Event, event_id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
-    return event
+    count = session.exec(
+        select(func.count(Order.id))
+        .where(Order.event_id == event_id, Order.status != OrderStatus.cancelled)
+    ).one()
+    item = EventReadWithTicketTypes.model_validate(event)
+    item.order_count = count
+    return item
 
 
 @router.put("/events/{event_id}", response_model=EventRead)

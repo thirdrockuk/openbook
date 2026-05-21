@@ -202,7 +202,5 @@ def delete_payment(
     ).first()
     if not payment:
         raise HTTPException(status_code=404, detail="Payment not found")
-    if payment.provider == "stub":
-        raise HTTPException(status_code=400, detail="Cannot delete system-generated payments")
     session.delete(payment)
     session.commit()

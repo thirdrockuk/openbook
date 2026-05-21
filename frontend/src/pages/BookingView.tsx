@@ -4,16 +4,16 @@ import { formatPence } from '../utils/currency';
 import { formatDate } from '../utils/date';
 
 const METHOD_LABELS: Record<string, string> = {
+  bank_transfer: 'Bank transfer',
+  card: 'Card payment',
   cash: 'Cash',
-  bank_transfer: 'Bank Transfer',
   cheque: 'Cheque',
   other: 'Other',
-  stub: 'Online',
 };
 
 const STATUS_LABELS: Record<string, { label: string; colour: string }> = {
-  confirmed: { label: 'Confirmed', colour: 'bg-green-100 text-green-700' },
   pending:   { label: 'Pending',   colour: 'bg-yellow-100 text-yellow-700' },
+  confirmed: { label: 'Confirmed', colour: 'bg-green-100 text-green-700' },
   cancelled: { label: 'Cancelled', colour: 'bg-red-100 text-red-600' },
   refunded:  { label: 'Refunded',  colour: 'bg-purple-100 text-purple-700' },
   expired:   { label: 'Expired',   colour: 'bg-white text-gray-700' },
@@ -23,7 +23,7 @@ export default function BookingView() {
   const { token } = useParams<{ token: string }>();
   const { data: booking, isLoading, isError } = useBookingView(token);
 
-  if (isLoading) return <div role="status" className="text-center py-16 text-gray-700">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-center py-16 text-gray-500">Loading…</div>;
   if (isError || !booking) {
     return (
       <div className="max-w-lg mx-auto py-16 text-center">
@@ -54,13 +54,13 @@ export default function BookingView() {
         </span>
       </div>
 
-      <div className="bg-white border rounded-lg p-5 mb-4">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-5 mb-4">
         <p className="text-sm text-gray-700 mb-1">Booking reference</p>
         <p className="font-mono text-lg font-bold text-gray-900">{booking.order_number}</p>
         <p className="text-sm text-gray-700 mt-1">Name on booking: {booking.booker_name}</p>
       </div>
 
-      <div className="bg-white border rounded-lg p-5 mb-4">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-5 mb-4">
         <h2 className="font-semibold text-gray-900 mb-3">Attendees</h2>
         <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -97,7 +97,7 @@ export default function BookingView() {
         </div>
       </div>
 
-      <div className="bg-white border rounded-lg p-5">
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-5">
         <h2 className="font-semibold text-gray-900 mb-3">Payments</h2>
 
         {booking.payments.length === 0 ? (

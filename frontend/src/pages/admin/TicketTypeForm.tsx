@@ -143,24 +143,25 @@ export default function AdminTicketTypeForm() {
     }
   }
 
-  if (isEditing && !initialised) return <div className="text-gray-500">Loading…</div>;
+  if (isEditing && !initialised) return <div role="status" className="text-gray-500">Loading…</div>;
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        {isEditing ? 'Edit Ticket Type' : 'New Ticket Type'}
-      </h1>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">{isEditing ? 'Edit Ticket Type' : 'New Ticket Type'}</h1>
+        <p className="text-sm text-gray-500 mt-1">{event?.title}</p>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         {submitError && (
           <p role="alert" className="text-sm text-red-600">{submitError}</p>
         )}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
+        <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 space-y-4">
           <h2 className="font-semibold text-gray-800">Ticket Type Details</h2>
           <div>
             <label htmlFor="tt-name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
             <input
               id="tt-name"
-              className="w-full border rounded px-3 py-2 text-sm"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="e.g. En Suite, Camping Full Board"
@@ -171,7 +172,7 @@ export default function AdminTicketTypeForm() {
             <label htmlFor="tt-description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
               id="tt-description"
-              className="w-full border rounded px-3 py-2 text-sm"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               rows={2}
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -185,7 +186,7 @@ export default function AdminTicketTypeForm() {
               <input
                 id="tt-inventory"
                 type="number"
-                className="w-full border rounded px-3 py-2 text-sm"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                 value={form.inventory_total}
                 onChange={(e) => setForm({ ...form, inventory_total: e.target.value })}
                 min="0"
@@ -196,15 +197,26 @@ export default function AdminTicketTypeForm() {
               <input
                 id="tt-sort-order"
                 type="number"
-                className="w-full border rounded px-3 py-2 text-sm"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                 value={form.sort_order}
                 onChange={(e) => setForm({ ...form, sort_order: e.target.value })}
               />
             </div>
           </div>
+          <div className="flex items-center gap-2 pt-1">
+            <input
+              id="tt-active"
+              type="checkbox"
+              checked={form.is_active}
+              onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+              className="rounded"
+            />
+            <label htmlFor="tt-active" className="text-sm font-medium text-gray-700">Active</label>
+            <span className="text-xs text-gray-400">(inactive ticket types are hidden from the booking flow)</span>
+          </div>
         </div>
 
-        <div className="bg-white border rounded-lg p-6">
+        <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-800">Price Bands</h2>
             <button
@@ -219,7 +231,7 @@ export default function AdminTicketTypeForm() {
             {bands.map((band, i) => (
               <div key={i} className="grid grid-cols-7 gap-2 items-center">
                 <input
-                  className="border rounded px-2 py-1 text-sm col-span-1"
+                  className="border border-gray-200 rounded-lg px-2 py-1 text-sm col-span-1"
                   placeholder="Label"
                   value={band.label}
                   onChange={(e) => updateBand(i, 'label', e.target.value)}
@@ -227,7 +239,7 @@ export default function AdminTicketTypeForm() {
                 />
                 <input
                   type="number"
-                  className="border rounded px-2 py-1 text-sm"
+                  className="border border-gray-200 rounded-lg px-2 py-1 text-sm"
                   placeholder="Min age"
                   value={band.age_min}
                   onChange={(e) => updateBand(i, 'age_min', e.target.value)}
@@ -236,7 +248,7 @@ export default function AdminTicketTypeForm() {
                 />
                 <input
                   type="number"
-                  className="border rounded px-2 py-1 text-sm"
+                  className="border border-gray-200 rounded-lg px-2 py-1 text-sm"
                   placeholder="Max age"
                   value={band.age_max}
                   onChange={(e) => updateBand(i, 'age_max', e.target.value)}
@@ -246,7 +258,7 @@ export default function AdminTicketTypeForm() {
                 <input
                   type="number"
                   step="0.01"
-                  className="border rounded px-2 py-1 text-sm"
+                  className="border border-gray-200 rounded-lg px-2 py-1 text-sm"
                   placeholder="Price (£)"
                   value={band.price_pounds}
                   onChange={(e) => updateBand(i, 'price_pounds', e.target.value)}
@@ -256,7 +268,7 @@ export default function AdminTicketTypeForm() {
                 <input
                   type="number"
                   step="0.01"
-                  className="border rounded px-2 py-1 text-sm"
+                  className="border border-gray-200 rounded-lg px-2 py-1 text-sm"
                   placeholder="Venue fee (£)"
                   value={band.venue_fee_pounds}
                   onChange={(e) => updateBand(i, 'venue_fee_pounds', e.target.value)}
@@ -264,7 +276,7 @@ export default function AdminTicketTypeForm() {
                   required
                 />
                 <select
-                  className="border rounded px-2 py-1 text-sm"
+                  className="border border-gray-200 rounded-lg px-2 py-1 text-sm"
                   value={band.qualifier}
                   onChange={(e) => updateBand(i, 'qualifier', e.target.value)}
                 >
@@ -287,14 +299,14 @@ export default function AdminTicketTypeForm() {
         <div className="flex gap-3">
           <button
             type="submit"
-            className="bg-sky-600 text-white px-6 py-2 rounded font-medium hover:bg-sky-700"
+            className="bg-sky-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-50"
           >
-            {isEditing ? 'Save Changes' : 'Create Ticket Type'}
+            {isEditing ? 'Save changes' : 'Create ticket type'}
           </button>
           <button
             type="button"
             onClick={() => navigate(`/admin/events/${eventId}/ticket-types`)}
-            className="border border-gray-300 px-6 py-2 rounded text-gray-700 hover:bg-gray-50"
+            className="border border-gray-200 px-6 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>

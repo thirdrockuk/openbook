@@ -84,14 +84,14 @@ export default function AttendeeForm({
   }
 
   return (
-    <div className="border rounded-lg p-4 bg-white">
+    <div className="border border-gray-100 rounded-xl shadow-sm p-4 bg-white">
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-medium text-gray-700">Attendee {index + 1}</h4>
         {canRemove && (
           <button
             type="button"
             onClick={() => onRemove(index)}
-            className="text-red-500 text-sm hover:text-red-700"
+            className="border border-red-200 text-red-600 bg-white hover:bg-red-50 rounded-lg text-sm px-2 py-1 transition-colors"
           >
             Remove
           </button>
@@ -104,7 +104,7 @@ export default function AttendeeForm({
           <input
             id={`attendee-${index}-name`}
             type="text"
-            className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             value={attendee.attendee_name}
             onChange={(e) => update('attendee_name', e.target.value)}
             placeholder="Full name"
@@ -117,7 +117,7 @@ export default function AttendeeForm({
           <input
             id={`attendee-${index}-dob`}
             type="date"
-            className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             value={attendee.attendee_dob}
             onChange={(e) => update('attendee_dob', e.target.value)}
             required
@@ -128,7 +128,7 @@ export default function AttendeeForm({
           <label htmlFor={`attendee-${index}-ticket`} className="block text-sm font-medium text-gray-700 mb-1">Ticket type</label>
           <select
             id={`attendee-${index}-ticket`}
-            className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             value={attendee.ticket_type_id}
             onChange={(e) => update('ticket_type_id', e.target.value)}
             required
@@ -179,7 +179,7 @@ export default function AttendeeForm({
             <textarea
               id={`attendee-${index}-dietary`}
               rows={2}
-              className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               value={attendee.dietary_requirements ?? ''}
               onChange={(e) => update('dietary_requirements', e.target.value)}
               placeholder="Optional"
@@ -190,7 +190,7 @@ export default function AttendeeForm({
             <textarea
               id={`attendee-${index}-access`}
               rows={2}
-              className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               value={attendee.access_requirements ?? ''}
               onChange={(e) => update('access_requirements', e.target.value)}
               placeholder="Optional"
@@ -200,13 +200,13 @@ export default function AttendeeForm({
       )}
 
       {resolvedBand && (
-        <div className="mt-3 p-2 bg-sky-50 border border-sky-200 rounded text-sm text-sky-900">
+        <div className="mt-3 p-2 bg-sky-50 border border-sky-200 rounded-lg text-sm text-sky-900">
           ✅ {resolvedBand.label} (age {resolvedBand.age_min}–{resolvedBand.age_max}) —{' '}
           <strong>{formatPence(resolvedBand.price_pence)}</strong>
         </div>
       )}
       {attendee.attendee_dob && attendee.ticket_type_id && !resolvedBand && (
-        <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded text-sm text-amber-800">
+        <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
           ⚠️ No price band found for this date of birth and ticket type.
         </div>
       )}

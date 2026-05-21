@@ -49,6 +49,12 @@ export default function Checkout() {
   const { data: event, isLoading } = useEvent(id);
 
   const [step, setStep] = useState<Step>(1);
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
+
+  function goTo(newStep: Step) {
+    setDirection(newStep > step ? 'forward' : 'backward');
+    setStep(newStep);
+  }
   const [attendees, setAttendees] = useState<AttendeeInput[]>([
     {
       attendee_name: '',
@@ -67,11 +73,18 @@ export default function Checkout() {
   });
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'bank_transfer' | 'card' | null>(null);
 
-  if (isLoading) return <div role="status" className="text-center py-12">Loading…</div>;
+  if (isLoading) return <div role="status" className="text-center py-12 text-gray-500">Loading…</div>;
   if (!event) return <div className="text-center py-12 text-red-500">Event not found.</div>;
 
   const eventStart = new Date(event.starts_at);
+  const allowedMethods = [
+    ...(event.allow_bank_transfer ? ['bank_transfer' as const] : []),
+    ...(event.allow_card_payment ? ['card' as const] : []),
+  ];
+  // Auto-select if only one method available
+  const effectivePaymentMethod = allowedMethods.length === 1 ? allowedMethods[0] : paymentMethod;
   const activeTicketTypes = event.ticket_types
     .filter((t) => t.is_active)
     .sort((a, b) => a.sort_order - b.sort_order);
@@ -129,6 +142,7 @@ export default function Checkout() {
         booker_name: booker.booker_name,
         booker_email: booker.booker_email,
         booker_phone: booker.booker_phone || undefined,
+        payment_method: effectivePaymentMethod ?? undefined,
         attendees: attendees.map((a) => ({
           ticket_type_id: a.ticket_type_id,
           attendee_name: a.attendee_name,
@@ -138,8 +152,13 @@ export default function Checkout() {
           access_requirements: a.access_requirements?.trim() || undefined,
         })),
       });
-      const confirmed = await confirmOrder(order.id);
-      navigate(`/orders/${confirmed.id}/confirmation`);
+      if (effectivePaymentMethod === 'card') {
+        // Don't confirm yet — Confirmation page handles Stripe payment first
+        navigate(`/orders/${order.id}/confirmation`, { state: { paymentMethod: 'card' } });
+      } else {
+        const confirmed = await confirmOrder(order.id);
+        navigate(`/orders/${confirmed.id}/confirmation`, { state: { paymentMethod: effectivePaymentMethod } });
+      }
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } };
       setError(err?.response?.data?.detail ?? 'Something went wrong. Please try again.');
@@ -156,18 +175,12 @@ export default function Checkout() {
 
   return (
     <div className="max-w-[60rem] mx-auto">
-      <Link to={`/events/${event.id}`} className="text-sm text-sky-600 hover:underline mb-4 block">
-        ← Back to event
+      <Link to={`/events/${event.id}`} className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 mb-4 transition-colors">
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to event
       </Link>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">{event.title}</h1>
-      <p className="text-gray-700 text-sm mb-6">
-        {eventStart.toLocaleDateString('en-GB', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}
-      </p>
 
       {/* Step indicator */}
       <div className="flex items-center mb-8">
@@ -177,7 +190,7 @@ export default function Checkout() {
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                 step >= s.number
                   ? 'bg-sky-600 text-white'
-                  : 'bg-white text-gray-700'
+                  : 'bg-gray-100 text-gray-500 border border-gray-200'
               }`}
             >
               {s.number}
@@ -189,125 +202,169 @@ export default function Checkout() {
             >
               {s.label}
             </span>
-            {i < steps.length - 1 && <div className="mx-4 flex-1 h-px bg-white w-8" />}
+            {i < steps.length - 1 && <div className="mx-4 flex-1 h-px bg-gray-200 w-8" />}
           </div>
         ))}
       </div>
 
-      {/* Step 1: Attendees */}
-      {step === 1 && (
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Add attendees</h2>
-          <div className="space-y-4">
-            {attendees.map((a, i) => (
-              <AttendeeForm
-                key={i}
-                index={i}
-                attendee={a}
+      <div key={step} className={`px-0.5 overflow-x-hidden ${direction === 'forward' ? 'step-slide-forward' : 'step-slide-backward'}`}>
+
+        {/* Step 1: Attendees */}
+        {step === 1 && (
+          <div>
+            <h2 className="text-lg font-semibold mb-4">Add attendees</h2>
+            <div className="space-y-4">
+              {attendees.map((a, i) => (
+                <AttendeeForm
+                  key={i}
+                  index={i}
+                  attendee={a}
+                  ticketTypes={activeTicketTypes}
+                  eventStart={eventStart}
+                  onChange={updateAttendee}
+                  onRemove={removeAttendee}
+                  canRemove={attendees.length > 1}
+                />
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={addAttendee}
+              className="mt-4 text-sm text-sky-600 hover:underline"
+            >
+              + Add another attendee
+            </button>
+
+            <div className="mt-6 flex items-center justify-between">
+              <div className="text-base font-semibold text-gray-900">Total: {formatPence(total)}</div>
+              <button
+                type="button"
+                onClick={() => goTo(2)}
+                disabled={!validateStep1()}
+                className="bg-sky-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Booker details */}
+        {step === 2 && (
+          <div>
+            <h2 className="text-lg font-semibold mb-4">Your details</h2>
+            <BookerDetailsForm details={booker} onChange={setBooker} />
+            <div className="mt-6 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => goTo(1)}
+                className="border border-gray-200 px-6 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={() => goTo(3)}
+                disabled={!validateStep2()}
+                className="bg-sky-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Review order
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Review */}
+        {step === 3 && (
+          <div>
+            <h2 className="text-lg font-semibold mb-4">Review and pay</h2>
+
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
+              <h3 className="font-medium text-gray-700 mb-3">Order summary</h3>
+              <OrderSummary
+                attendees={attendees}
                 ticketTypes={activeTicketTypes}
                 eventStart={eventStart}
-                onChange={updateAttendee}
-                onRemove={removeAttendee}
-                canRemove={attendees.length > 1}
               />
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={addAttendee}
-            className="mt-4 text-sm text-sky-600 hover:underline"
-          >
-            + Add another attendee
-          </button>
-
-          <div className="mt-6 flex items-center justify-between">
-            <div className="text-lg font-semibold">Total: {formatPence(total)}</div>
-            <button
-              type="button"
-              onClick={() => setStep(2)}
-              disabled={!validateStep1()}
-              className="bg-sky-600 text-white px-6 py-2 rounded font-medium hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 2: Booker details */}
-      {step === 2 && (
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Your details</h2>
-          <BookerDetailsForm details={booker} onChange={setBooker} />
-          <div className="mt-6 flex gap-4">
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="border border-gray-700 px-6 py-2 rounded font-medium text-gray-700 hover:bg-white"
-            >
-              Back
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep(3)}
-              disabled={!validateStep2()}
-              className="bg-sky-600 text-white px-6 py-2 rounded font-medium hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Review order
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 3: Review */}
-      {step === 3 && (
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Review and pay</h2>
-
-          <div className="bg-white rounded-lg border p-4 mb-4">
-            <h3 className="font-medium text-gray-700 mb-3">Order summary</h3>
-            <OrderSummary
-              attendees={attendees}
-              ticketTypes={activeTicketTypes}
-              eventStart={eventStart}
-            />
-          </div>
-
-          <div className="bg-white rounded-lg border p-4 mb-4">
-            <h3 className="font-medium text-gray-700 mb-2">Booker details</h3>
-            <p className="text-sm text-gray-700">{booker.booker_name}</p>
-            <p className="text-sm text-gray-700">{booker.booker_email}</p>
-            {booker.booker_phone && (
-              <p className="text-sm text-gray-700">{booker.booker_phone}</p>
-            )}
-          </div>
-
-          {error && (
-            <div role="alert" className="bg-red-50 border border-red-200 text-red-700 rounded p-3 mb-4 text-sm">
-              {error}
             </div>
-          )}
 
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => setStep(2)}
-              className="border border-gray-700 px-6 py-2 rounded font-medium text-gray-700 hover:bg-white"
-            >
-              Back
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="bg-green-600 text-white px-8 py-2 rounded font-semibold hover:bg-green-700 disabled:opacity-50"
-            >
-              {submitting ? 'Processing…' : `Complete booking — ${formatPence(total)}`}
-            </button>
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
+              <h3 className="font-medium text-gray-700 mb-2">Booker details</h3>
+              <p className="text-sm text-gray-700">{booker.booker_name}</p>
+              <p className="text-sm text-gray-700">{booker.booker_email}</p>
+              {booker.booker_phone && (
+                <p className="text-sm text-gray-700">{booker.booker_phone}</p>
+              )}
+            </div>
+
+            {allowedMethods.length > 1 && (
+              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
+                <h3 className="font-medium text-gray-700 mb-3">Payment method</h3>
+                <div className="space-y-2">
+                  {event.allow_bank_transfer && (
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="payment_method"
+                        value="bank_transfer"
+                        checked={paymentMethod === 'bank_transfer'}
+                        onChange={() => setPaymentMethod('bank_transfer')}
+                        className="mt-0.5"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Bank transfer</p>
+                        <p className="text-xs text-gray-500">Pay by bank transfer — details shown after booking</p>
+                      </div>
+                    </label>
+                  )}
+                  {event.allow_card_payment && (
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="payment_method"
+                        value="card"
+                        checked={paymentMethod === 'card'}
+                        onChange={() => setPaymentMethod('card')}
+                        className="mt-0.5"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Card payment</p>
+                        <p className="text-xs text-gray-500">Pay securely by card</p>
+                      </div>
+                    </label>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {error && (
+              <div role="alert" className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 mb-4 text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => goTo(2)}
+                className="border border-gray-200 px-6 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={submitting || !effectivePaymentMethod}
+                className="bg-sky-600 text-white px-8 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-50"
+              >
+                {submitting ? 'Processing…' : `Complete booking — ${formatPence(total)}`}
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+      </div>
     </div>
   );
 }

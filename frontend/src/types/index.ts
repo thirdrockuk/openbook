@@ -17,6 +17,10 @@ export interface Event {
   sales_end_at: string | null;
   banner_image_url: string | null;
   order_number_prefix: string | null;
+  allow_bank_transfer: boolean;
+  allow_card_payment: boolean;
+  bank_transfer_details: string;
+  stripe_account_id: string | null;
   price_band_template: PriceBandTemplateEntry[];
   created_at: string;
   updated_at: string;
@@ -77,6 +81,7 @@ export interface Order {
   confirmed_at: string | null;
   expires_at: string;
   view_token: string;
+  payment_method: string | null;
   order_items: OrderItem[];
   payments: Payment[];
   amount_paid_pence: number;

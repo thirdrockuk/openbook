@@ -55,16 +55,20 @@ export default function AdminUserForm() {
 
   return (
     <div className="max-w-lg">
-      <Link to="/admin/users" className="text-sm text-sky-600 hover:underline">
-        ← Back to Users
-      </Link>
-      <h1 className="text-2xl font-bold text-gray-900 mt-2 mb-6">
-        {isEditing ? 'Edit Admin User' : 'New Admin User'}
-      </h1>
+      <div className="mb-6">
+        <Link to="/admin/users" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 mb-2 transition-colors">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Back to users
+        </Link>
+        <h1 className="text-2xl font-bold text-gray-900">{isEditing ? 'Edit Admin User' : 'New Admin User'}</h1>
+        <p className="text-sm text-gray-500 mt-1">{isEditing ? 'Update account details' : 'Create a new admin account'}</p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="bg-white border rounded-lg p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 space-y-4">
         {error && (
-          <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-sm rounded px-4 py-3">
+          <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
             {error}
           </div>
         )}
@@ -74,7 +78,7 @@ export default function AdminUserForm() {
           <input
             id="user-email"
             type="email"
-            className="w-full border rounded px-3 py-2 text-sm"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
@@ -88,7 +92,7 @@ export default function AdminUserForm() {
           <input
             id="user-password"
             type="password"
-            className="w-full border rounded px-3 py-2 text-sm"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             minLength={8}
@@ -111,13 +115,13 @@ export default function AdminUserForm() {
         <div className="flex gap-3 pt-2">
           <button
             type="submit"
-            className="bg-sky-600 text-white px-6 py-2 rounded font-medium hover:bg-sky-700"
+            className="bg-sky-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-50"
           >
-            {isEditing ? 'Save Changes' : 'Create User'}
+            {isEditing ? 'Save changes' : 'Create user'}
           </button>
           <Link
             to="/admin/users"
-            className="border border-gray-300 px-6 py-2 rounded text-gray-700 hover:bg-gray-50 text-sm flex items-center"
+            className="border border-gray-200 px-6 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
           >
             Cancel
           </Link>

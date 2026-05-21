@@ -29,6 +29,7 @@ class Order(SQLModel, table=True):
     confirmed_at: Optional[datetime] = None
     expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     view_token: uuid.UUID = Field(default_factory=uuid.uuid4)
+    payment_method: Optional[str] = None
 
     event: Optional["Event"] = Relationship(back_populates="orders")
     order_items: List["OrderItem"] = Relationship(

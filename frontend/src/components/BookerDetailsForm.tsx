@@ -22,7 +22,7 @@ export default function BookerDetailsForm({ details, onChange }: Props) {
         <input
           id="booker-name"
           type="text"
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
           value={details.booker_name}
           onChange={(e) => update('booker_name', e.target.value)}
           placeholder="Your full name"
@@ -34,7 +34,7 @@ export default function BookerDetailsForm({ details, onChange }: Props) {
         <input
           id="booker-email"
           type="email"
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
           value={details.booker_email}
           onChange={(e) => update('booker_email', e.target.value)}
           placeholder="your@email.com"
@@ -46,7 +46,7 @@ export default function BookerDetailsForm({ details, onChange }: Props) {
         <input
           id="booker-email-confirm"
           type="email"
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
           value={details.booker_email_confirm}
           onChange={(e) => update('booker_email_confirm', e.target.value)}
           placeholder="Confirm email"
@@ -65,7 +65,7 @@ export default function BookerDetailsForm({ details, onChange }: Props) {
         <input
           id="booker-phone"
           type="tel"
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
           value={details.booker_phone}
           onChange={(e) => update('booker_phone', e.target.value)}
           placeholder="+44..."

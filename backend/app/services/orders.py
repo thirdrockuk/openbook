@@ -46,6 +46,7 @@ def create_order(session: Session, data: OrderCreate) -> Order:
         booker_name=data.booker_name,
         booker_email=data.booker_email,
         booker_phone=data.booker_phone,
+        payment_method=data.payment_method,
         status=OrderStatus.pending,
         expires_at=datetime.now(timezone.utc) + timedelta(minutes=15),
     )
